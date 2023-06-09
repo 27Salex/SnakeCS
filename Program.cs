@@ -22,10 +22,9 @@ namespace SnakeGame
             ShowMenu();
             while (inGame)
             {
+                Console.Clear();
                 PrintBoard();
                 ReadInput();
-                CellCheck();
-                CheckWin();
             }
         }
         private static void ShowMenu()
@@ -75,38 +74,70 @@ namespace SnakeGame
 
         private static void ReadInput()
         {
-            throw new NotImplementedException();
-        }
+            bool teclaCorrecta = false;
+            //Console.WriteLine("Recuerda, te mueves con las flechas ;)");
 
+            while (!teclaCorrecta) 
+            { 
+        
+                switch (Console.ReadKey().Key)
+                {
+                        case ConsoleKey.DownArrow:
+                            snkHeadPos[0] += 1;
+                            teclaCorrecta = true;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            snkHeadPos[0] -= 1;
+                            teclaCorrecta = true;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            snkHeadPos[1] -= 1;
+                            teclaCorrecta = true;
+                            break;
+                        case ConsoleKey.RightArrow:
+                            snkHeadPos[1] += 1;
+                            teclaCorrecta = true;
+                            break;
+                        default:
+                        Console.WriteLine("Te he dicho las flechas merluzo!! >:(");
+                        break;
+                }
+
+            }
+        }
+ 
         private static void PrintBoard()
         {
-            board[snkHeadPos[0], snkHeadPos[1]] = '□';
+            Console.WriteLine("Points: " + points);
+            board[snkHeadPos[0], snkHeadPos[1]] = '@';
+
+            Console.Write("╔");
             for (int i = 0; i <= rows * 2 + 1; i++)
             {
-                Console.Write('-');
+                Console.Write('═');
             }
 
-            Console.WriteLine("\\");
+            Console.WriteLine("╗");
 
             for (int i = 0; i <= rows; i++)
             {
-
+                Console.Write("║");
                 for (int j = 0; j <= rows; j++)
                 {
                     Console.Write(board[i, j]);
                     Console.Write(" ");
                 }
-                Console.WriteLine("|");
+                Console.WriteLine("║");
 
             }
 
+            Console.Write("╚");
             for (int i = 0; i <= rows * 2 + 1; i++)
             {
-                Console.Write('-');
+                Console.Write('═');
             }
 
-            Console.WriteLine('/');
-            Console.ReadKey();
+            Console.WriteLine('╝');
         }
     }
 }
