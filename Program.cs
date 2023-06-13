@@ -18,6 +18,7 @@ namespace SnakeGame
         public static int points;
         public static int rows;
         public static int bodyCount = 0;
+        public static int foodCount = 0;
 
         static void Main(string[] args)
         {
@@ -28,9 +29,11 @@ namespace SnakeGame
                 Console.Clear();
                 PrintBoard();
                 ReadInput();
+                GenerateFood();
+                
             }
         }
-        private static void ShowMenu()
+        public static void ShowMenu()
         {
             Console.SetWindowSize(100, 25);
 
@@ -43,20 +46,33 @@ namespace SnakeGame
                ".----)   |   |  |\\   |  /  _____  \\  |  .  \\  |  |____\r\n" +
                "|_______/    |__| \\__| /__/     \\__\\ |__|\\__\\ |_______|");
 
-            Console.WriteLine("Introduce el numero de lineas que quieras");
+            Console.WriteLine("Introduce el numero de lineas que quieras (Min: 11, impar)");
             int lines = 0;
-            while (lines % 2 == 0 || lines < 0 ) 
+
+            bool numValido = true;
+            while (numValido) 
             {
                 while (!int.TryParse(Console.ReadLine(), out lines)) 
                 {
-                    Console.WriteLine("introduce numero");
+                    Console.WriteLine("Solo se permiten numeros");
                 }
-                if(lines % 2 == 0 || lines < 0)
+                if (lines % 2 == 0 || lines < 0 || lines == 0)
+                {
                     Console.WriteLine("Porfavor introduce un numero impar positvo");
+                }
+                else if (lines < 11)
+                { 
+                    Console.WriteLine("El numero minimo es 11, porfavor prueba con uno más grande");
+                }
+                else
+                {
+                    numValido = false;
+                }
+
             }
 
-                    
-            
+
+
             board = new char[lines, lines];
             snkHeadPos[0] = lines/2;
             snkHeadPos[1] = lines/2;
@@ -72,17 +88,43 @@ namespace SnakeGame
             Console.ReadKey();
         }
 
-        private static void CheckWin()
+        public static void GenerateFood()
         {
-            throw new NotImplementedException();
+            if (foodCount == 0)
+            {
+                int[] FoodPos;
+                FoodPos = new int[2];
+                Random rand = new Random();
+                while (board[FoodPos[0],FoodPos[1]] != '\0')
+                {
+                    FoodPos[0] = rand.Next(0, rows);
+                    FoodPos[1] = rand.Next(0, rows);
+                }
+
+                board[FoodPos[0], FoodPos[1]] = '*';
+                foodCount = 1;
+            }
         }
 
-        private static void CellCheck()
+        public static void CellCheck(int[] checkPos)
         {
-            
+
+            if (board[checkPos[0], checkPos[1]] == '*')
+            {
+                points++;
+                foodCount = 0;
+            }
+
+            if (points >= 10)
+            {
+                Console.Clear();
+                Console.WriteLine("FELICIDADES HAS GANADO!!");
+                Thread.Sleep(3000);
+                inGame = false;
+            }
         }
 
-        private static void HeadMovement (String teclaPulsada)
+        public static void HeadMovement (String teclaPulsada)
         {
             previousHeadPosition[0] = snkHeadPos[0];
             previousHeadPosition[1] = snkHeadPos[1];
@@ -139,8 +181,9 @@ namespace SnakeGame
                     break;
 
             }
+            CellCheck(snkHeadPos);
         }
-        private static void TailMovement()
+        public static void TailMovement()
         {
             board[snkTailPos[0], snkTailPos[1]] = ' ';
             snkTailPos[0] = previousHeadPosition[0];
@@ -148,7 +191,7 @@ namespace SnakeGame
 
         }
 
-        private static void ReadInput()
+        public static void ReadInput()
         {
             Console.WriteLine("Recuerda, te mueves con las flechas ;)");
             string tecla = "";
@@ -173,7 +216,7 @@ namespace SnakeGame
         }
 
         
-        private static void PrintBoard()
+        public static void PrintBoard()
         {
             Console.WriteLine("Points: " + points);
             board[snkHeadPos[0], snkHeadPos[1]] = '■';
