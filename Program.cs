@@ -14,6 +14,7 @@ namespace SnakeGame
         public static bool inGame;
         public static int[] snkHeadPos = new int[2];
         public static int[] snkTailPos = new int[2];
+        public static int[] previousHeadPosition = new int[2];
         public static int points;
         public static int rows;
         public static int bodyCount = 0;
@@ -83,85 +84,68 @@ namespace SnakeGame
 
         private static void HeadMovement (String teclaPulsada)
         {
-            int[] previousPos = snkHeadPos;
+            previousHeadPosition[0] = snkHeadPos[0];
+            previousHeadPosition[1] = snkHeadPos[1];
             switch (teclaPulsada)
             {
                 case "Abajo":
-                    if (board[previousPos[0], previousPos[1]] == board[rows, previousPos[1]])
+                    if (board[previousHeadPosition[0], previousHeadPosition[1]] == board[rows, previousHeadPosition[1]])
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[0] = 0;
                     }
                     else
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[0] += 1;                        
                     }
                     break;
                 case "Arriba":
-                    if (board[previousPos[0], previousPos[1]] == board[0, previousPos[1]])
+                    if (board[previousHeadPosition[0], previousHeadPosition[1]] == board[0, previousHeadPosition[1]])
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[0] = rows;
                     }
                     else
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[0] -= 1;
                     }
                     break;
 
                 case "Derecha":
-                    if (board[previousPos[0], previousPos[1]] == board[previousPos[0], rows])
+                    if (board[previousHeadPosition[0], previousHeadPosition[1]] == board[previousHeadPosition[0], rows])
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[1] = 0;
                     }
                     else
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[1] += 1;
                     }
                     break;
                 case "Izquierda":
-                    if (board[previousPos[0], previousPos[1]] == board[previousPos[0], 0])
+                    if (board[previousHeadPosition[0], previousHeadPosition[1]] == board[previousHeadPosition[0], 0])
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[1] = rows;
                     }
                     else
                     {
-                        board[previousPos[0], previousPos[1]] = '■';
+                        board[previousHeadPosition[0], previousHeadPosition[1]] = '■';
                         snkHeadPos[1] -= 1;
                     }
                     break;
+
             }
         }
-        private static void TailMovement(String teclaPulsada)
+        private static void TailMovement()
         {
-            int[] previousPos = snkTailPos;
-            switch (teclaPulsada)
-            {
-                case "Abajo":
-                    board[previousPos[0], previousPos[1]] = ' ';
-                    snkTailPos[0] += 1;
-                    break;
+            board[snkTailPos[0], snkTailPos[1]] = ' ';
+            snkTailPos[0] = previousHeadPosition[0];
+            snkTailPos[1] = previousHeadPosition[1];
 
-                case "Arriba":
-                    board[previousPos[0], previousPos[1]] = ' ';
-                    snkTailPos[0] -= 1;
-                    break;
-
-                case "Derecha":
-                    board[previousPos[0], previousPos[1]] = ' ';
-                    snkTailPos[1] += 1;
-                    break;
-
-                case "Izquierda":
-                    board[previousPos[0], previousPos[1]] = ' ';
-                    snkTailPos[1] -= 1;
-                    break;
-            }
         }
 
         private static void ReadInput()
@@ -185,11 +169,7 @@ namespace SnakeGame
                     break;                   
             }
             HeadMovement(tecla);
-
-            if (bodyCount > 3)
-                TailMovement(tecla);
-            else
-                bodyCount++;
+            TailMovement();
         }
 
         
